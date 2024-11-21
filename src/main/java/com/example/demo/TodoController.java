@@ -16,8 +16,8 @@ public class TodoController {
   }
 
   @PostMapping("/todos")
-  public @ResponseBody String createTodo(@RequestParam String description) {
-    addTodoUseCase.process(description);
+  public @ResponseBody String createTodo(@RequestParam String id, @RequestParam String description) {
+    addTodoUseCase.process(Long.valueOf(id), description);
     return "OK";
   }
 }

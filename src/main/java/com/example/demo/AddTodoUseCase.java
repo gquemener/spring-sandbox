@@ -3,27 +3,28 @@ package com.example.demo;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.ports.driven.ForPersistingTodo;
+import com.example.demo.ports.driven.ForPublishingDomainEvent;
+
 import jakarta.transaction.Transactional;
 
 @Service
 public class AddTodoUseCase {
-  private TodoRepository todoRepository;
-  private ApplicationEventPublisher eventPublisher;
+  private ForPersistingTodo forPersistingTodo;
+  private ForPublishingDomainEvent forPublishingDomainEvent;
 
   public AddTodoUseCase(
-      TodoRepository todoRepository,
-      ApplicationEventPublisher eventPublisher) {
-    this.todoRepository = todoRepository; // (Driven port) for persisting todo
-    this.eventPublisher = eventPublisher; // (Driven port) for publishing event
+      ForPersistingTodo forPersistingTodo,
+      ForPublishingDomainEvent forPublishingDomainEvent) {
+    this.forPersistingTodo = forPersistingTodo;
+    this.forPublishingDomainEvent = forPublishingDomainEvent;
   }
 
   @Transactional
-  public void process(String description) {
-    Todo todo = new Todo(description);
-    todoRepository.save(todo);
-    System.out.println("After todoRepository.save");
-    eventPublisher.publishEvent(new TodoCreated(todo.id(), todo.description()));
-    System.out.println("After eventPublisher.publishEvent");
+  public void process(Long id, String description) {
+    Todo todo = new Todo(id, description);
+    forPersistingTodo.save(todo);
+    forPublishingDomainEvent.publish(new TodoCreated(id, description));
   }
 
   /**

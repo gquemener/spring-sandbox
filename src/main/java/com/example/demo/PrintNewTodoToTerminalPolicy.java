@@ -7,6 +7,6 @@ import org.springframework.transaction.event.TransactionalEventListener;
 public class PrintNewTodoToTerminalPolicy {
   @TransactionalEventListener
   public void onTodoCreated(TodoCreated event) {
-    System.out.println(String.format("Todo #%d: %s", event.id(), event.description()));
+    System.out.println(event);
   }
 }
